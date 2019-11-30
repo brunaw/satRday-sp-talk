@@ -3,7 +3,7 @@ library(tidyverse)
 library(ranger)
 data <- dials::Chicago
 
-data_tibble <- rep(list(data), 5) %>% 
+data_tibble <- rep(list(data), 10) %>% 
   enframe(name = 'index', value = 'data')
 data_tibble
 
@@ -57,17 +57,6 @@ treinando_models <- data_tibble %>%
       map2(parametros, map(treino_teste, "treino"), 
            ~list_modify(.x, treino = .y)),
     modelo_treinado = invoke_map(modelagem, full_parametros))
-
-# Rodando 125 models! Melhorar paralelizar?
-
-# treinando_models <- data_tibble %>% 
-#   mutate(
-#     full_parametros = 
-#       map2(parametros, map(treino_teste, "treino"), 
-#            ~list_modify(.x, treino = .y)),
-#     modelo_treinado = 
-#       invoke_map(modelagem, full_parametros))
-
 
 
 eqm <- function(modelo, teste){

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>The tidyverse for Machine Learning</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Bruna Wundervald" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <script src="libs/kePrint/kePrint.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/my-theme.css" type="text/css" />
+    <link rel="stylesheet" href="css/my-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+class:  title-slide
+background-image: url(img/ap.png)
+background-size: cover
+
+
+
+
+.footnote[
+# The `tidyverse` for Machine Learning
+### Bruna Wundervald,
+### `satRday` São Paulo,
+### November, 2019
+]
+
+
+???
+
+---
+name: hello
+class: inverse, left, bottom
+
+
+.pull-left[
+[GitHub: @brunaw](http://github.com/brunaw)  
+[Site: http://brunaw.com/](http://brunaw.com/)  
+[Twitter: @bwundervald](http://twitter.com/bwundervald)  
+]
+
+&lt;img style="border-radius: 50%;" src="https://github.com/brunaw.png" width="150px"/&gt;
+
+# Find me
+
+
+  - Ph.D. Candidate in Statistics at the 
+  [Hamilton Institute, Maynooth University](https://www.maynoothuniversity.ie/hamilton)
+  
+  - Especially interested in tree-based models:
+    - Regularization in Random Forests
+    - Bayesian Additive Regression Trees (BART)
+
+  
+
+
+???
+
+Here is my contact information.
+
+
+---
+class: inverse, right, bottom
+
+## Links 
+
+`pt-br`: http://brunaw.com/slides/satrday-sp/tidyverse-para-AM.html
+`en`: http://brunaw.com/slides/satrday-sp/tidyverse-for-ml.html
+
+GitHub Repository: https://github.com/brunaw/satRday-sp-talk
+
+---
+
+
+# Introduction
+
+- Thanks to the `tidyverse`, nowadays are much easier to 
+create nested workflows of data wrangling and analysis in `R`
+
+- However, we can beyond and use the `tidyverse` for the whole
+modeling process as well
+
+- How?
+
+&lt;img src="img/pacotes.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+
+???
+
+
+
+---
+
+# Tidy-data
+
+&lt;img src="img/tidy_data.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+&lt;img src="img/hadley.jpg" width="20%" style="display: block; margin: auto;" /&gt;
+
+
+
+
+---
+
+# Data 
+
+- About the daily number of people using the Clark and Lake station in
+Chicago (in thousands)
+
+&gt; Goal: to predict this variable and find the optimal variables
+for that
+
+- Predictors:
+  - Date  
+  - Weather
+  - Sport teams schedules
+  - +
+  
+
+
+---
+
+# Loading data and visualizing
+
+```{r
+library(tidyverse)
+library(ranger)
+
+data &lt;- dials::Chicago
+
+dim(data)
+```
+
+
+
+```
+[1] 5698   50
+```
+
+
+```{r
+data %&gt;%  
+  ggplot(aes(x = ridership)) +
+  geom_density(fill = "#919c4c", alpha = 0.8) +
+  labs(x = "Response Variable", y = "Density") +
+  theme_classic()
+```
+
+
+---
+
+&lt;img src="tidyverse-for-ml_files/figure-html/unnamed-chunk-5-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+.pull-left[
+
+
+&lt;img src="tidyverse-for-ml_files/figure-html/unnamed-chunk-6-1.png" width="95%" style="display: block; margin: auto;" /&gt;
+
+
+]
+
+.pull-right[
+
+- Interesting distribution!
+- Good for tree-based models
+
+&lt;img src="img/tree.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+]
+
+
+---
+
+## Replicating the same dataset
+
+```{r
+data_tibble &lt;- rep(list(data), 5) %&gt;% 
+  enframe(name = 'index', value = 'data')
+data_tibble
+```
+
+
+```
+# A tibble: 5 x 2
+  index data                 
+  &lt;int&gt; &lt;list&gt;               
+1     1 &lt;tibble [5,698 × 50]&gt;
+2     2 &lt;tibble [5,698 × 50]&gt;
+3     3 &lt;tibble [5,698 × 50]&gt;
+4     4 &lt;tibble [5,698 × 50]&gt;
+5     5 &lt;tibble [5,698 × 50]&gt;
+```
+
+
+.callout[The `data` column is now a list of tibbles!]
+
+---
+
+## Splitting in train (75%) and test (25%) sets
+
+```{r
+train_test &lt;- function(data){
+  data %&gt;% 
+    mutate(base = ifelse(runif(n()) &gt; 0.75, "test", "train")) %&gt;% 
+    split(.$base) %&gt;% 
+    purrr::map(~select(.x, -.data[["base"]])) }
+
+(data_tibble &lt;- data_tibble %&gt;% 
+*  mutate(train_test = purrr::map(data, train_test)))
+
+```
+
+
+
+```
+# A tibble: 5 x 3
+  index data                  train_test      
+  &lt;int&gt; &lt;list&gt;                &lt;list&gt;          
+1     1 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
+2     2 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
+3     3 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
+4     4 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
+5     5 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
+```
+
+
+.callout[The `train_test` column is a list with two elements:
+the train and test sets]
+
+---
+
+&lt;img src="img/next.jpeg" width="50%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+
+## Modelling: tree-based methods
+
+
+- Many similar models with different hyperparameter configuration
+
+.pull-left[
+&lt;img src="img/vars_space2.png" width="70%" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+&lt;img src="img/vars_space.png" width="70%" style="display: block; margin: auto;" /&gt;
+]
+
+
+
+
+---
+
+## Modelling: tree-based methods
+
+  - Trees (CART): 1 tree, `\(\texttt{mtry}\)` = all available variables
+  
+  - *Bagging*: average of many trees, `\(\texttt{mtry}\)` = # all available variables
+
+
+  - Random Forest: average of many trees, `\(\texttt{mtry} \approx \sqrt{\text{# all available variables}}\)`
+  
+  - Regularized Random Forests: average of many trees,, `\(\texttt{mtry} \approx \text{# all available variables}/2\)`, 
+  variable gain penalized by a factor between 0 and 1 to regularize
+  
+
+(More about Regularized Random Forests in: http://brunaw.com/slides/seminar-serie/presentation.html)
+  
+
+
+---
+
+Creating a function to fit all the models:
+
+
+```{r
+modelling &lt;- function(train, 
+                      mtry = NULL, 
+                      num.trees = NULL, 
+                      coef.reg = 1, 
+                      formula = ridership ~ .) {
+  
+  ranger::ranger(formula, 
+                 data = train, 
+                 num.trees = num.trees,
+                 mtry = mtry, 
+                 importance = "impurity", 
+                 regularization = list(coef.reg = coef.reg))
+}
+```
+
+
+
+
+&gt; Note: this version of the `ranger` package is available at
+https://github.com/regularization-rf/ranger (November 30), 
+to be added to the core package soon
+
+---
+
+Nesting models:
+
+```{r
+models &lt;- list(
+  tree = list(mtry = ncol(data) - 1, num.trees = 1, coef.reg = 1),
+  bagging = list(mtry = ncol(data) - 1, num.trees = 100, coef.reg = 1), 
+  forest = list(mtry = sqrt(ncol(data) - 1), num.trees = 100, coef.reg = 1),
+  regularized_forest07 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.7),
+  regularized_forest0702 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.2)) %&gt;% 
+  enframe(name = 'model', value = 'parameters')
+
+models
+```
+
+
+```
+# A tibble: 5 x 2
+  model                  parameters      
+  &lt;chr&gt;                  &lt;list&gt;          
+1 tree                   &lt;named list [3]&gt;
+2 bagging                &lt;named list [3]&gt;
+3 forest                 &lt;named list [3]&gt;
+4 regularized_forest07   &lt;named list [3]&gt;
+5 regularized_forest0702 &lt;named list [3]&gt;
+```
+
+
+---
+
+Adding the models to our main `tibble`:
+
+```{r
+data_tibble &lt;- data_tibble %&gt;% 
+*  crossing(models) %&gt;% 
+  arrange(model)
+
+data_tibble
+```
+
+
+```
+# A tibble: 25 x 5
+   index data                  train_test       model   parameters      
+   &lt;int&gt; &lt;list&gt;                &lt;list&gt;           &lt;chr&gt;   &lt;list&gt;          
+ 1     1 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; bagging &lt;named list [3]&gt;
+ 2     2 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; bagging &lt;named list [3]&gt;
+ 3     3 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; bagging &lt;named list [3]&gt;
+ 4     4 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; bagging &lt;named list [3]&gt;
+ 5     5 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; bagging &lt;named list [3]&gt;
+ 6     1 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; forest  &lt;named list [3]&gt;
+ 7     2 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; forest  &lt;named list [3]&gt;
+ 8     3 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; forest  &lt;named list [3]&gt;
+ 9     4 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; forest  &lt;named list [3]&gt;
+10     5 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; forest  &lt;named list [3]&gt;
+# … with 15 more rows
+```
+
+
+---
+
+Finally training all the models at once!
+
+
+There are many models to run, so now you go grab a coffee, 
+read a magazine...
+
+
+
+```{r
+training_models &lt;- data_tibble %&gt;% 
+  mutate(
+    full_parameters = 
+*      map2(parameters, map(train_test, "train"), ~list_modify(.x, train = .y)),
+*    train_model = invoke_map(modelling, full_parameters))
+
+print(training_models, n = 5)
+```
+
+
+```
+# A tibble: 25 x 7
+  index data      train_test  model parameters  full_parameters train_model
+  &lt;int&gt; &lt;list&gt;    &lt;list&gt;      &lt;chr&gt; &lt;list&gt;      &lt;list&gt;          &lt;list&gt;     
+1     1 &lt;tibble … &lt;named lis… bagg… &lt;named lis… &lt;named list [4… &lt;ranger&gt;   
+2     2 &lt;tibble … &lt;named lis… bagg… &lt;named lis… &lt;named list [4… &lt;ranger&gt;   
+3     3 &lt;tibble … &lt;named lis… bagg… &lt;named lis… &lt;named list [4… &lt;ranger&gt;   
+4     4 &lt;tibble … &lt;named lis… bagg… &lt;named lis… &lt;named list [4… &lt;ranger&gt;   
+5     5 &lt;tibble … &lt;named lis… bagg… &lt;named lis… &lt;named list [4… &lt;ranger&gt;   
+# … with 20 more rows
+```
+
+
+
+---
+
+&lt;img src="img/thousand.jpeg" width="70%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Which are the best models?
+
+
+- Metrics:
+
+  - Root Mean Squared Error
+  - Total number of variables used in the model
+  - R-squared
+
+
+```{r
+rmse &lt;- function(model, test){
+  pp &lt;- predict(model, test)
+  sqrt(mean((pp$predictions - test$ridership)^2))
+}
+
+
+number_variables &lt;- function(model){
+  sum(model$variable.importance &gt; 0)
+}
+```
+
+
+
+
+---
+
+Results!
+
+```{r
+results &lt;- training_models %&gt;% 
+  mutate(
+*    rmse = map2_dbl(.x = train_model,
+*                   .y = map(train_test, "test"), 
+*                   ~rmse(model = .x, test = .y)),
+*    number_variables = map_int(train_model, number_variables), 
+*    rsquared = map_dbl(train_model, "r.squared"))
+
+```
+
+
+
+
+&lt;table class="table table-condensed table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+&lt;caption&gt;Mean results per model combination&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; model &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; rmse &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; number_variables &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; rsquared &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; bagging &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.713 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 49 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 100.00%"&gt;0.831&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; forest &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 69.57%"&gt;2.672&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 49 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 100.00%"&gt;0.831&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; regularized_forest07 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.674 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.829 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; regularized_forest0702 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.766 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 30.20%"&gt;14.8&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.821 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; tree &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 3.841 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 47.2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.653 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+---
+
+All the elements in only one object!
+
+
+```r
+results 
+```
+
+```
+# A tibble: 25 x 10
+   index data  train_test model parameters full_parameters train_model
+   &lt;int&gt; &lt;lis&gt; &lt;list&gt;     &lt;chr&gt; &lt;list&gt;     &lt;list&gt;          &lt;list&gt;     
+ 1     1 &lt;tib… &lt;named li… bagg… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
+ 2     2 &lt;tib… &lt;named li… bagg… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
+ 3     3 &lt;tib… &lt;named li… bagg… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
+ 4     4 &lt;tib… &lt;named li… bagg… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
+ 5     5 &lt;tib… &lt;named li… bagg… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
+ 6     1 &lt;tib… &lt;named li… fore… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
+ 7     2 &lt;tib… &lt;named li… fore… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
+ 8     3 &lt;tib… &lt;named li… fore… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
+ 9     4 &lt;tib… &lt;named li… fore… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
+10     5 &lt;tib… &lt;named li… fore… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
+# … with 15 more rows, and 3 more variables: rmse &lt;dbl&gt;,
+#   number_variables &lt;int&gt;, rsquared &lt;dbl&gt;
+```
+
+
+
+---
+
+# Conclusions
+
+
+- The `tidyverse` makes the modeling workflow in `R` very clear and 
+compact
+
+- We can build a unique object to store everything at the same time:
+data, train, test, hyperparameters, fitted models, results, 
+evaluation metrics, computational detail, etc
+  - Very useful to quickly compare models
+  - Reproducibility (papers, reports)
+
+
+---
+
+# Conclusions
+
+&lt;img src="img/purrrr.jpg" width="40%" style="display: block; margin: auto;" /&gt;
+
+
+
+
+
+---
+
+class: inverse, center, middle
+
+# Thanks!
+
+
+&lt;img src= "https://s3.amazonaws.com/kleebtronics-media/img/icons/github-white.png", width="50", height="50",  align="middle"&gt; 
+
+&lt;b&gt;[@brunaw](https://github.com/brunaw)&lt;b&gt;
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
