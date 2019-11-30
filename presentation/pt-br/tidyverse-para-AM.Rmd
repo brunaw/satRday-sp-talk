@@ -24,7 +24,7 @@ editor_options:
 options(htmltools.dir.version = FALSE)
 knitr::opts_chunk$set(warning = FALSE, message = FALSE, 
   comment = NA, dpi = 300, echo = FALSE, echo = FALSE, 
-  fig.align = "center", out.width = "80%", cache = TRUE)
+  fig.align = "center", out.width = "80%", cache = FALSE)
 library(tidyverse)
 ```
 
@@ -236,7 +236,7 @@ knitr::include_graphics("img/tree.png")
 ## Replicando o mesmo conjunto de dados
 
 ```{r
-data_tibble <- rep(list(data), 5) %>% 
+data_tibble <- rep(list(data), 10) %>% 
   enframe(name = 'index', value = 'data')
 data_tibble
 ```
@@ -260,10 +260,9 @@ treino_teste <- function(data){
     mutate(base = ifelse(runif(n()) > 0.75, "teste", "treino")) %>% 
     split(.$base) %>% 
     purrr::map(~select(.x, -.data[["base"]])) }
-
-(data_tibble <- data_tibble %>% 
-*  mutate(treino_teste = purrr::map(data, treino_teste)))
-
+data_tibble <- data_tibble %>% 
+*  mutate(treino_teste = purrr::map(data, treino_teste))
+print(data_tibble, n = 3)
 ```
 
 
@@ -273,9 +272,9 @@ treino_teste <- function(data){
     mutate(base = ifelse(runif(n()) > 0.75, "teste", "treino")) %>% 
     split(.$base) %>% 
     purrr::map(~select(.x, -.data[["base"]])) }
-
-(data_tibble <- data_tibble %>% 
-  mutate(treino_teste = purrr::map(data, treino_teste)))
+data_tibble <- data_tibble %>% 
+  mutate(treino_teste = purrr::map(data, treino_teste))
+print(data_tibble, n = 3)
 ```
 
 

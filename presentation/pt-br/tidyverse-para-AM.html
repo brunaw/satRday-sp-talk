@@ -187,7 +187,7 @@ data %&gt;%
 ## Replicando o mesmo conjunto de dados
 
 ```{r
-data_tibble &lt;- rep(list(data), 5) %&gt;% 
+data_tibble &lt;- rep(list(data), 10) %&gt;% 
   enframe(name = 'index', value = 'data')
 data_tibble
 ```
@@ -222,28 +222,21 @@ treino_teste &lt;- function(data){
     mutate(base = ifelse(runif(n()) &gt; 0.75, "teste", "treino")) %&gt;% 
     split(.$base) %&gt;% 
     purrr::map(~select(.x, -.data[["base"]])) }
-
-(data_tibble &lt;- data_tibble %&gt;% 
-*  mutate(treino_teste = purrr::map(data, treino_teste)))
-
+data_tibble &lt;- data_tibble %&gt;% 
+*  mutate(treino_teste = purrr::map(data, treino_teste))
+print(data_tibble, n = 3)
 ```
 
 
 
 ```
 # A tibble: 10 x 3
-   index data                  treino_teste    
-   &lt;int&gt; &lt;list&gt;                &lt;list&gt;          
- 1     1 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
- 2     2 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
- 3     3 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
- 4     4 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
- 5     5 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
- 6     6 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
- 7     7 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
- 8     8 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
- 9     9 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
-10    10 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
+  index data                  treino_teste    
+  &lt;int&gt; &lt;list&gt;                &lt;list&gt;          
+1     1 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
+2     2 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
+3     3 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
+# … with 7 more rows
 ```
 
 
@@ -476,33 +469,33 @@ resultados &lt;- treinando_modelos %&gt;%
 &lt;tbody&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; arvores &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 3.822 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 48 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.671 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 3.707 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 47.4 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.657 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; bagging &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 2.727 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 49 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.699 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 48.7 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; 0.827 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; floresta &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 71.17%"&gt;2.720&lt;/span&gt; &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 49 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 100.00%"&gt;0.831&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 72.35%"&gt;2.682&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 48.5 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 100.00%"&gt;0.830&lt;/span&gt; &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; floresta_regularizada02 &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 2.804 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 29.59%"&gt;14.5&lt;/span&gt; &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.821 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.749 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 29.16%"&gt;14.2&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.823 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; floresta_regularizada07 &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 2.729 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 18.3 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.828 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 17.9 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.827 &lt;/td&gt;
   &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;

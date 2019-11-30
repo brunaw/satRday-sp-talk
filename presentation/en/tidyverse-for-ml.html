@@ -183,21 +183,26 @@ data %&gt;%
 ## Replicating the same dataset
 
 ```{r
-data_tibble &lt;- rep(list(data), 5) %&gt;% 
+data_tibble &lt;- rep(list(data), 10) %&gt;% 
   enframe(name = 'index', value = 'data')
 data_tibble
 ```
 
 
 ```
-# A tibble: 5 x 2
-  index data                 
-  &lt;int&gt; &lt;list&gt;               
-1     1 &lt;tibble [5,698 × 50]&gt;
-2     2 &lt;tibble [5,698 × 50]&gt;
-3     3 &lt;tibble [5,698 × 50]&gt;
-4     4 &lt;tibble [5,698 × 50]&gt;
-5     5 &lt;tibble [5,698 × 50]&gt;
+# A tibble: 10 x 2
+   index data                 
+   &lt;int&gt; &lt;list&gt;               
+ 1     1 &lt;tibble [5,698 × 50]&gt;
+ 2     2 &lt;tibble [5,698 × 50]&gt;
+ 3     3 &lt;tibble [5,698 × 50]&gt;
+ 4     4 &lt;tibble [5,698 × 50]&gt;
+ 5     5 &lt;tibble [5,698 × 50]&gt;
+ 6     6 &lt;tibble [5,698 × 50]&gt;
+ 7     7 &lt;tibble [5,698 × 50]&gt;
+ 8     8 &lt;tibble [5,698 × 50]&gt;
+ 9     9 &lt;tibble [5,698 × 50]&gt;
+10    10 &lt;tibble [5,698 × 50]&gt;
 ```
 
 
@@ -214,22 +219,21 @@ train_test &lt;- function(data){
     split(.$base) %&gt;% 
     purrr::map(~select(.x, -.data[["base"]])) }
 
-(data_tibble &lt;- data_tibble %&gt;% 
-*  mutate(train_test = purrr::map(data, train_test)))
-
+data_tibble &lt;- data_tibble %&gt;% 
+*  mutate(train_test = purrr::map(data, train_test))
+print(data_tibble, n = 3)
 ```
 
 
 
 ```
-# A tibble: 5 x 3
+# A tibble: 10 x 3
   index data                  train_test      
   &lt;int&gt; &lt;list&gt;                &lt;list&gt;          
 1     1 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
 2     2 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
 3     3 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
-4     4 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
-5     5 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt;
+# … with 7 more rows
 ```
 
 
@@ -350,7 +354,7 @@ data_tibble
 
 
 ```
-# A tibble: 25 x 5
+# A tibble: 50 x 5
    index data                  train_test       model   parameters      
    &lt;int&gt; &lt;list&gt;                &lt;list&gt;           &lt;chr&gt;   &lt;list&gt;          
  1     1 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; bagging &lt;named list [3]&gt;
@@ -358,12 +362,12 @@ data_tibble
  3     3 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; bagging &lt;named list [3]&gt;
  4     4 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; bagging &lt;named list [3]&gt;
  5     5 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; bagging &lt;named list [3]&gt;
- 6     1 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; forest  &lt;named list [3]&gt;
- 7     2 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; forest  &lt;named list [3]&gt;
- 8     3 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; forest  &lt;named list [3]&gt;
- 9     4 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; forest  &lt;named list [3]&gt;
-10     5 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; forest  &lt;named list [3]&gt;
-# … with 15 more rows
+ 6     6 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; bagging &lt;named list [3]&gt;
+ 7     7 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; bagging &lt;named list [3]&gt;
+ 8     8 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; bagging &lt;named list [3]&gt;
+ 9     9 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; bagging &lt;named list [3]&gt;
+10    10 &lt;tibble [5,698 × 50]&gt; &lt;named list [2]&gt; bagging &lt;named list [3]&gt;
+# … with 40 more rows
 ```
 
 
@@ -389,7 +393,7 @@ print(training_models, n = 5)
 
 
 ```
-# A tibble: 25 x 7
+# A tibble: 50 x 7
   index data      train_test  model parameters  full_parameters train_model
   &lt;int&gt; &lt;list&gt;    &lt;list&gt;      &lt;chr&gt; &lt;list&gt;      &lt;list&gt;          &lt;list&gt;     
 1     1 &lt;tibble … &lt;named lis… bagg… &lt;named lis… &lt;named list [4… &lt;ranger&gt;   
@@ -397,7 +401,7 @@ print(training_models, n = 5)
 3     3 &lt;tibble … &lt;named lis… bagg… &lt;named lis… &lt;named list [4… &lt;ranger&gt;   
 4     4 &lt;tibble … &lt;named lis… bagg… &lt;named lis… &lt;named list [4… &lt;ranger&gt;   
 5     5 &lt;tibble … &lt;named lis… bagg… &lt;named lis… &lt;named list [4… &lt;ranger&gt;   
-# … with 20 more rows
+# … with 45 more rows
 ```
 
 
@@ -464,33 +468,33 @@ results &lt;- training_models %&gt;%
 &lt;tbody&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; bagging &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 2.639 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 49 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.825 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.759 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 48.6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.83 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; forest &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 70.98%"&gt;2.634&lt;/span&gt; &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 49 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 100.00%"&gt;0.826&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 70.16%"&gt;2.758&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 48.7 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 100.00%"&gt;0.832&lt;/span&gt; &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; regularized_forest02 &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 2.652 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 31.02%"&gt;15.2&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.796 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 30.60%"&gt;14.9&lt;/span&gt; &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; 0.824 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; regularized_forest07 &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 2.651 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 18.6 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.823 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.762 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 17.6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.83 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; tree &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 3.711 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 48 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.648 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 3.931 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 47.9 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.659 &lt;/td&gt;
   &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -506,7 +510,7 @@ results
 ```
 
 ```
-# A tibble: 25 x 10
+# A tibble: 50 x 10
    index data  train_test model parameters full_parameters train_model
    &lt;int&gt; &lt;lis&gt; &lt;list&gt;     &lt;chr&gt; &lt;list&gt;     &lt;list&gt;          &lt;list&gt;     
  1     1 &lt;tib… &lt;named li… bagg… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
@@ -514,12 +518,12 @@ results
  3     3 &lt;tib… &lt;named li… bagg… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
  4     4 &lt;tib… &lt;named li… bagg… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
  5     5 &lt;tib… &lt;named li… bagg… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
- 6     1 &lt;tib… &lt;named li… fore… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
- 7     2 &lt;tib… &lt;named li… fore… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
- 8     3 &lt;tib… &lt;named li… fore… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
- 9     4 &lt;tib… &lt;named li… fore… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
-10     5 &lt;tib… &lt;named li… fore… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
-# … with 15 more rows, and 3 more variables: rmse &lt;dbl&gt;,
+ 6     6 &lt;tib… &lt;named li… bagg… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
+ 7     7 &lt;tib… &lt;named li… bagg… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
+ 8     8 &lt;tib… &lt;named li… bagg… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
+ 9     9 &lt;tib… &lt;named li… bagg… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
+10    10 &lt;tib… &lt;named li… bagg… &lt;named li… &lt;named list [4… &lt;ranger&gt;   
+# … with 40 more rows, and 3 more variables: rmse &lt;dbl&gt;,
 #   number_variables &lt;int&gt;, rsquared &lt;dbl&gt;
 ```
 
