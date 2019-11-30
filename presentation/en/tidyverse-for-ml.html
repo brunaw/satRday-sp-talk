@@ -317,7 +317,7 @@ models &lt;- list(
   bagging = list(mtry = ncol(data) - 1, num.trees = 100, coef.reg = 1), 
   forest = list(mtry = sqrt(ncol(data) - 1), num.trees = 100, coef.reg = 1),
   regularized_forest07 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.7),
-  regularized_forest0702 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.2)) %&gt;% 
+  regularized_forest02 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.2)) %&gt;% 
   enframe(name = 'model', value = 'parameters')
 
 models
@@ -326,13 +326,13 @@ models
 
 ```
 # A tibble: 5 x 2
-  model                  parameters      
-  &lt;chr&gt;                  &lt;list&gt;          
-1 tree                   &lt;named list [3]&gt;
-2 bagging                &lt;named list [3]&gt;
-3 forest                 &lt;named list [3]&gt;
-4 regularized_forest07   &lt;named list [3]&gt;
-5 regularized_forest0702 &lt;named list [3]&gt;
+  model                parameters      
+  &lt;chr&gt;                &lt;list&gt;          
+1 tree                 &lt;named list [3]&gt;
+2 bagging              &lt;named list [3]&gt;
+3 forest               &lt;named list [3]&gt;
+4 regularized_forest07 &lt;named list [3]&gt;
+5 regularized_forest02 &lt;named list [3]&gt;
 ```
 
 
@@ -464,33 +464,33 @@ results &lt;- training_models %&gt;%
 &lt;tbody&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; bagging &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 2.713 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.639 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; 49 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 100.00%"&gt;0.831&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.825 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; forest &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 69.57%"&gt;2.672&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 70.98%"&gt;2.634&lt;/span&gt; &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; 49 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 100.00%"&gt;0.831&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 100.00%"&gt;0.826&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; regularized_forest02 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.652 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 31.02%"&gt;15.2&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.824 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; regularized_forest07 &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 2.674 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 19 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.829 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; regularized_forest0702 &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 2.766 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 30.20%"&gt;14.8&lt;/span&gt; &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.821 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.651 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 18.6 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.823 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; tree &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 3.841 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 47.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.653 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 3.711 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 48 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.648 &lt;/td&gt;
   &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;

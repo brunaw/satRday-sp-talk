@@ -379,7 +379,7 @@ models <- list(
   bagging = list(mtry = ncol(data) - 1, num.trees = 100, coef.reg = 1), 
   forest = list(mtry = sqrt(ncol(data) - 1), num.trees = 100, coef.reg = 1),
   regularized_forest07 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.7),
-  regularized_forest0702 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.2)) %>% 
+  regularized_forest02 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.2)) %>% 
   enframe(name = 'model', value = 'parameters')
 
 models
@@ -391,7 +391,7 @@ models <- list(
   bagging = list(mtry = ncol(data) - 1, num.trees = 100, coef.reg = 1), 
   forest = list(mtry = sqrt(ncol(data) - 1), num.trees = 100, coef.reg = 1),
   regularized_forest07 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.7),
-  regularized_forest0702 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.2)) %>% 
+  regularized_forest02 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.2)) %>% 
   enframe(name = 'model', value = 'parameters')
 
 models
