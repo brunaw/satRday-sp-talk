@@ -79,10 +79,10 @@ GitHub Repository: https://github.com/brunaw/satRday-sp-talk
 
 # Introduction
 
-- Thanks to the `tidyverse`, nowadays are much easier to 
+- Thanks to the `tidyverse`, nowadays it's much easier to 
 create nested workflows of data wrangling and analysis in `R`
 
-- However, we can beyond and use the `tidyverse` for the whole
+- However, we can beyond that and use the `tidyverse` for the whole
 modeling process as well
 
 - How?
@@ -118,10 +118,9 @@ for that
 
 - Predictors:
   - Date  
-  - Weather
+  - Weather information
   - Sport teams schedules
   - +
-  
 
 
 ---
@@ -468,33 +467,33 @@ results &lt;- training_models %&gt;%
 &lt;tbody&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; bagging &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 2.759 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 48.6 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.83 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.674 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 48.9 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.826 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; forest &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 70.16%"&gt;2.758&lt;/span&gt; &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 48.7 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 100.00%"&gt;0.832&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 71.29%"&gt;2.652&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 48.8 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 100.00%"&gt;0.828&lt;/span&gt; &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; regularized_forest02 &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 2.796 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 30.60%"&gt;14.9&lt;/span&gt; &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.824 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.701 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 30.27%"&gt;14.8&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.819 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; regularized_forest07 &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 2.762 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 17.6 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.83 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.674 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 18.2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.827 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; tree &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 3.931 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 47.9 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.659 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 3.72 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 47.8 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.668 &lt;/td&gt;
   &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -538,8 +537,8 @@ results
 compact
 
 - We can build a unique object to store everything at the same time:
-data, train, test, hyperparameters, fitted models, results, 
-evaluation metrics, computational detail, etc
+data, train, test, seeds, hyperparameters, fitted models, results, 
+evaluation metrics, computational details, etc
   - Very useful to quickly compare models
   - Reproducibility (papers, reports)
 

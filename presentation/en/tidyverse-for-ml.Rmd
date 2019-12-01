@@ -91,10 +91,10 @@ GitHub Repository: https://github.com/brunaw/satRday-sp-talk
 
 # Introduction
 
-- Thanks to the `tidyverse`, nowadays are much easier to 
+- Thanks to the `tidyverse`, nowadays it's much easier to 
 create nested workflows of data wrangling and analysis in `R`
 
-- However, we can beyond and use the `tidyverse` for the whole
+- However, we can beyond that and use the `tidyverse` for the whole
 modeling process as well
 
 - How?
@@ -136,10 +136,9 @@ for that
 
 - Predictors:
   - Date  
-  - Weather
+  - Weather information
   - Sport teams schedules
   - +
-  
 
 
 ---
@@ -563,8 +562,8 @@ results
 compact
 
 - We can build a unique object to store everything at the same time:
-data, train, test, hyperparameters, fitted models, results, 
-evaluation metrics, computational detail, etc
+data, train, test, seeds, hyperparameters, fitted models, results, 
+evaluation metrics, computational details, etc
   - Very useful to quickly compare models
   - Reproducibility (papers, reports)
 

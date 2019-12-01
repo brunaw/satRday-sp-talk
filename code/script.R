@@ -89,6 +89,6 @@ resultados %>%
   ggplot(aes(x = eqm)) +
   facet_wrap(~modelo) +
   geom_density(fill = "#f5c04a") +
-  labs(y = "Densidade", x = "MSQR") +
+  labs(y = "Densidade", x = "eqm") +
   theme_classic() 
   
