@@ -339,7 +339,7 @@ knitr::include_graphics("img/vars_space.png")
 modelagem <- function(treino, 
                       mtry = NULL, 
                       num.trees = NULL, 
-                      coef.reg = 1, 
+                      regularization = 1, 
                       formula = ridership ~ .) {
   
   ranger::ranger(formula, 
@@ -347,7 +347,7 @@ modelagem <- function(treino,
                  num.trees = num.trees,
                  mtry = mtry, 
                  importance = "impurity", 
-                 regularization = list(coef.reg = coef.reg))
+                 regularization.factor = regularization)
 }
 ```
 
@@ -355,7 +355,7 @@ modelagem <- function(treino,
 modelagem <- function(treino, 
                       mtry = NULL, 
                       num.trees = NULL, 
-                      coef.reg = 1, 
+                      regularization = 1, 
                       formula = ridership ~ .) {
   
   ranger::ranger(formula, 
@@ -363,14 +363,13 @@ modelagem <- function(treino,
                  num.trees = num.trees,
                  mtry = mtry, 
                  importance = "impurity", 
-                 regularization = list(coef.reg = coef.reg))
+                 regularization.factor = regularization)
 }
 ```
 
 
-> Nota: essa versão do pacote `ranger` está disponível em 
-https://github.com/regularization-rf/ranger (30 de Novembro), 
-a ser adicionado ao pacote principal em breve
+> Nota: essa é versão 0.11.8 do pacote `ranger`,  disponível em 
+https://github.com/regularization-rf/ranger 
 
 ---
 
@@ -378,11 +377,11 @@ Encadeando os modelos:
 
 ```{r
 modelos <- list(
-  arvores = list(mtry = ncol(data) - 1, num.trees = 1, coef.reg = 1),
-  bagging = list(mtry = ncol(data) - 1, num.trees = 100, coef.reg = 1), 
-  floresta = list(mtry = sqrt(ncol(data) - 1), num.trees = 100, coef.reg = 1),
-  floresta_regularizada07 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.7),
-  floresta_regularizada02 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.2)) %>% 
+  arvores = list(mtry = ncol(data) - 1, num.trees = 1, regularization = 1),
+  bagging = list(mtry = ncol(data) - 1, num.trees = 100, regularization = 1), 
+  floresta = list(mtry = sqrt(ncol(data) - 1), num.trees = 100, regularization = 1),
+  floresta_regularizada07 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, regularization = 0.7),
+  floresta_regularizada02 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, regularization = 0.2)) %>% 
   enframe(name = 'modelo', value = 'parametros')
 
 modelos
@@ -390,11 +389,11 @@ modelos
 
 ```{r}
 modelos <- list(
-  arvores = list(mtry = ncol(data) - 1, num.trees = 1, coef.reg = 1),
-  bagging = list(mtry = ncol(data) - 1, num.trees = 100, coef.reg = 1), 
-  floresta = list(mtry = sqrt(ncol(data) - 1), num.trees = 100, coef.reg = 1),
-  floresta_regularizada07 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.7),
-  floresta_regularizada02 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.2)) %>% 
+  arvores = list(mtry = ncol(data) - 1, num.trees = 1, regularization = 1),
+  bagging = list(mtry = ncol(data) - 1, num.trees = 100, regularization = 1), 
+  floresta = list(mtry = sqrt(ncol(data) - 1), num.trees = 100, regularization = 1),
+  floresta_regularizada07 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, regularization = 0.7),
+  floresta_regularizada02 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, regularization = 0.2)) %>% 
   enframe(name = 'modelo', value = 'parametros')
 
 modelos

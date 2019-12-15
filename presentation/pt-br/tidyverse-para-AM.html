@@ -295,7 +295,7 @@ de treino e os de teste]
 modelagem &lt;- function(treino, 
                       mtry = NULL, 
                       num.trees = NULL, 
-                      coef.reg = 1, 
+                      regularization = 1, 
                       formula = ridership ~ .) {
   
   ranger::ranger(formula, 
@@ -303,16 +303,15 @@ modelagem &lt;- function(treino,
                  num.trees = num.trees,
                  mtry = mtry, 
                  importance = "impurity", 
-                 regularization = list(coef.reg = coef.reg))
+                 regularization.factor = regularization)
 }
 ```
 
 
 
 
-&gt; Nota: essa versão do pacote `ranger` está disponível em 
-https://github.com/regularization-rf/ranger (30 de Novembro), 
-a ser adicionado ao pacote principal em breve
+&gt; Nota: essa é versão 0.11.8 do pacote `ranger`,  disponível em 
+https://github.com/regularization-rf/ranger 
 
 ---
 
@@ -320,11 +319,11 @@ Encadeando os modelos:
 
 ```{r
 modelos &lt;- list(
-  arvores = list(mtry = ncol(data) - 1, num.trees = 1, coef.reg = 1),
-  bagging = list(mtry = ncol(data) - 1, num.trees = 100, coef.reg = 1), 
-  floresta = list(mtry = sqrt(ncol(data) - 1), num.trees = 100, coef.reg = 1),
-  floresta_regularizada07 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.7),
-  floresta_regularizada02 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.2)) %&gt;% 
+  arvores = list(mtry = ncol(data) - 1, num.trees = 1, regularization = 1),
+  bagging = list(mtry = ncol(data) - 1, num.trees = 100, regularization = 1), 
+  floresta = list(mtry = sqrt(ncol(data) - 1), num.trees = 100, regularization = 1),
+  floresta_regularizada07 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, regularization = 0.7),
+  floresta_regularizada02 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, regularization = 0.2)) %&gt;% 
   enframe(name = 'modelo', value = 'parametros')
 
 modelos
@@ -469,33 +468,33 @@ resultados &lt;- treinando_modelos %&gt;%
 &lt;tbody&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; arvores &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 3.707 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 47.4 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.657 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 3.8 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 47.9 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.656 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; bagging &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 2.699 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 48.7 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.827 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.66 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 49 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.826 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; floresta &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 72.35%"&gt;2.682&lt;/span&gt; &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 48.5 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 100.00%"&gt;0.830&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 69.58%"&gt;2.644&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 49 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 100.00%"&gt;0.827&lt;/span&gt; &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; floresta_regularizada02 &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 2.749 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 29.16%"&gt;14.2&lt;/span&gt; &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.823 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.707 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 29.59%"&gt;14.5&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.82 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; floresta_regularizada07 &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 2.7 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 17.9 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.827 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.668 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 18.2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.826 &lt;/td&gt;
   &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;

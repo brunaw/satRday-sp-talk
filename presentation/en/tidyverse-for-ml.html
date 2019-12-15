@@ -291,7 +291,7 @@ Creating a function to fit all the models:
 modelling &lt;- function(train, 
                       mtry = NULL, 
                       num.trees = NULL, 
-                      coef.reg = 1, 
+                      regularization = 1, 
                       formula = ridership ~ .) {
   
   ranger::ranger(formula, 
@@ -299,16 +299,16 @@ modelling &lt;- function(train,
                  num.trees = num.trees,
                  mtry = mtry, 
                  importance = "impurity", 
-                 regularization = list(coef.reg = coef.reg))
+                 regularization.factor = regularization)
 }
 ```
 
 
 
 
-&gt; Note: this version of the `ranger` package is available at
-https://github.com/regularization-rf/ranger (November 30), 
-to be added to the core package soon
+&gt; Note: this is the 0.11.8 version of the `ranger` package,
+available at https://github.com/imbs-hl/ranger 
+
 
 ---
 
@@ -316,11 +316,11 @@ Nesting models:
 
 ```{r
 models &lt;- list(
-  tree = list(mtry = ncol(data) - 1, num.trees = 1, coef.reg = 1),
-  bagging = list(mtry = ncol(data) - 1, num.trees = 100, coef.reg = 1), 
-  forest = list(mtry = sqrt(ncol(data) - 1), num.trees = 100, coef.reg = 1),
-  regularized_forest07 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.7),
-  regularized_forest02 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.2)) %&gt;% 
+  tree = list(mtry = ncol(data) - 1, num.trees = 1, regularization = 1),
+  bagging = list(mtry = ncol(data) - 1, num.trees = 100, regularization = 1), 
+  forest = list(mtry = sqrt(ncol(data) - 1), num.trees = 100, regularization = 1),
+  regularized_forest07 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, regularization = 0.7),
+  regularized_forest02 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, regularization = 0.2)) %&gt;% 
   enframe(name = 'model', value = 'parameters')
 
 models
@@ -467,33 +467,33 @@ results &lt;- training_models %&gt;%
 &lt;tbody&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; bagging &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 2.674 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 48.9 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.826 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; forest &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 71.29%"&gt;2.652&lt;/span&gt; &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 48.8 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 100.00%"&gt;0.828&lt;/span&gt; &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; regularized_forest02 &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 2.701 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 30.27%"&gt;14.8&lt;/span&gt; &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.819 &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; regularized_forest07 &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 2.674 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 18.2 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.738 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 49 &lt;/td&gt;
    &lt;td style="text-align:left;"&gt; 0.827 &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; forest &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 72.23%"&gt;2.721&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 49 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 100.00%"&gt;0.830&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; regularized_forest02 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.757 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 30.41%"&gt;14.9&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.824 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; regularized_forest07 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 2.748 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 19.5 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: lightgreen; width: 100.00%"&gt;0.830&lt;/span&gt; &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
    &lt;td style="text-align:left;"&gt; tree &lt;/td&gt;
-   &lt;td style="text-align:left;width: 3cm; "&gt; 3.72 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 47.8 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; 0.668 &lt;/td&gt;
+   &lt;td style="text-align:left;width: 3cm; "&gt; 3.767 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 48.2 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.677 &lt;/td&gt;
   &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;

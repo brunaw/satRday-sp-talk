@@ -336,7 +336,7 @@ Creating a function to fit all the models:
 modelling <- function(train, 
                       mtry = NULL, 
                       num.trees = NULL, 
-                      coef.reg = 1, 
+                      regularization = 1, 
                       formula = ridership ~ .) {
   
   ranger::ranger(formula, 
@@ -344,7 +344,7 @@ modelling <- function(train,
                  num.trees = num.trees,
                  mtry = mtry, 
                  importance = "impurity", 
-                 regularization = list(coef.reg = coef.reg))
+                 regularization.factor = regularization)
 }
 ```
 
@@ -352,7 +352,7 @@ modelling <- function(train,
 modelling <- function(train, 
                       mtry = NULL, 
                       num.trees = NULL, 
-                      coef.reg = 1, 
+                      regularization = 1, 
                       formula = ridership ~ .) {
   
   ranger::ranger(formula, 
@@ -360,14 +360,14 @@ modelling <- function(train,
                  num.trees = num.trees,
                  mtry = mtry, 
                  importance = "impurity", 
-                 regularization = list(coef.reg = coef.reg))
+                 regularization.factor = regularization)
 }
 ```
 
 
-> Note: this version of the `ranger` package is available at
-https://github.com/regularization-rf/ranger (November 30), 
-to be added to the core package soon
+> Note: this is the 0.11.8 version of the `ranger` package,
+available at https://github.com/imbs-hl/ranger 
+
 
 ---
 
@@ -375,11 +375,11 @@ Nesting models:
 
 ```{r
 models <- list(
-  tree = list(mtry = ncol(data) - 1, num.trees = 1, coef.reg = 1),
-  bagging = list(mtry = ncol(data) - 1, num.trees = 100, coef.reg = 1), 
-  forest = list(mtry = sqrt(ncol(data) - 1), num.trees = 100, coef.reg = 1),
-  regularized_forest07 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.7),
-  regularized_forest02 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.2)) %>% 
+  tree = list(mtry = ncol(data) - 1, num.trees = 1, regularization = 1),
+  bagging = list(mtry = ncol(data) - 1, num.trees = 100, regularization = 1), 
+  forest = list(mtry = sqrt(ncol(data) - 1), num.trees = 100, regularization = 1),
+  regularized_forest07 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, regularization = 0.7),
+  regularized_forest02 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, regularization = 0.2)) %>% 
   enframe(name = 'model', value = 'parameters')
 
 models
@@ -387,11 +387,11 @@ models
 
 ```{r}
 models <- list(
-  tree = list(mtry = ncol(data) - 1, num.trees = 1, coef.reg = 1),
-  bagging = list(mtry = ncol(data) - 1, num.trees = 100, coef.reg = 1), 
-  forest = list(mtry = sqrt(ncol(data) - 1), num.trees = 100, coef.reg = 1),
-  regularized_forest07 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.7),
-  regularized_forest02 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, coef.reg = 0.2)) %>% 
+  tree = list(mtry = ncol(data) - 1, num.trees = 1, regularization = 1),
+  bagging = list(mtry = ncol(data) - 1, num.trees = 100, regularization = 1), 
+  forest = list(mtry = sqrt(ncol(data) - 1), num.trees = 100, regularization = 1),
+  regularized_forest07 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, regularization = 0.7),
+  regularized_forest02 =  list(mtry = (ncol(data) - 1)/2, num.trees = 100, regularization = 0.2)) %>% 
   enframe(name = 'model', value = 'parameters')
 
 models
